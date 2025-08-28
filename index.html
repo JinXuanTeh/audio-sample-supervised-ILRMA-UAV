@@ -57,9 +57,12 @@
 
     /* ---------------- Small screens ---------------- */
     @media (max-width:640px){
-      .wrap{margin:0;padding:20px;border-radius:0}
-      .players{grid-template-columns:1fr}
-    }
+      .wrap{margin:0;padding:16px;border-radius:0}
+      /* Keep 3 case columns on phones: enable horizontal scroll instead of stacking */
+      .section{overflow-x:auto}
+      .players, .row{min-width:820px; grid-template-columns:200px repeat(3, 200px)}
+    
+}
   </style>
 </head>
 <body>
