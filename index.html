@@ -1,197 +1,185 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Audio Samples – BF + iILRMA</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <link rel="icon" href="favicon.ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Audio Samples — Supervised ILRMA (UAV)</title>
   <style>
-    /* —— Reset & Base —— */
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      font-family:
-        -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-        Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-      background: #f8f9fa;
-      color: #343a40;
-      line-height: 1.6;
+    /* ---------------- Base & Layout ---------------- */
+    :root{
+      --bg:#f7f7fb; --fg:#1f2937; --muted:#6b7280; --card:#ffffff;
+      --brand:#0b63f6; --rule:#e5e7eb; --chip:#eef2ff; --chipfg:#1e3a8a;
     }
-    .wrapper {
-      max-width: 960px;
-      margin: 3rem auto;
-      padding: 2.5rem;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-    }
-    h1 {
-      font-size: 2.8em;
-      margin-bottom: .75rem;
-      color: #212529;
-      font-weight: 600;
-    }
-    h2 {
-      font-size: 1.3em;
-      margin: 0 0 .5rem;
-      font-weight: 400;
-      color: #6c757d;
-    }
-    .authors p {
-      margin: 0;
-      font-size: .95em;
-      color: #495057;
-    }
-    .conference {
-      font-size: .95em;
-      color: #6c757d;
-      margin: .5rem 0 1.5rem;
-    }
-    .paper-links {
-      margin-bottom: 2rem;
-    }
-    .paper-links a {
-      color: #0056b3;
-      text-decoration: none;
-    }
-    .paper-links a:hover {
-      text-decoration: underline;
-    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,Helvetica,sans-serif;color:var(--fg);background:var(--bg);line-height:1.6}
+    .wrap{max-width:980px;margin:48px auto;padding:32px;background:var(--card);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.06)}
+    h1{margin:.25rem 0;font-size:2.2rem;letter-spacing:.2px}
+    h2{margin:0.25rem 0 1rem;font-size:1.15rem;color:var(--muted);font-weight:500}
+    hr{border:0;border-top:1px solid var(--rule);margin:20px 0}
 
-    .audio-section {
-      border-top: 1px solid #e9ecef;
-      padding: 2rem 0 1rem;
-    }
-    .audio-section h3 {
-      font-size: 1.4em;
-      margin: 0 0 1rem;
-      color: #0056b3;
-      font-weight: 500;
-    }
-    .audio-section h3 strong { font-weight: 600 }
+    /* ---------------- Meta chips ---------------- */
+    .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin:.5rem 0 1.25rem}
+    .chip{background:var(--chip);color:var(--chipfg);padding:.25rem .6rem;border-radius:999px;font-size:.8rem}
 
-    .grid-header, .grid-row {
-      display: grid;
-      grid-template-columns: 1.5fr 3fr 3fr;
-      gap: 1.5rem;
-      align-items: center;
-    }
-    .grid-header {
-      font-weight: 600;
-      color: #495057;
-      border-bottom: 2px solid #dee2e6;
-      padding-bottom: 1rem;
-      margin-bottom: 1rem;
-      font-size: .9em;
-      text-transform: none;
-      letter-spacing: .5px;
-    }
-    .grid-row {
-      padding: .5rem 0;
-      border-bottom: 1px solid #f1f3f5;
-    }
-    .grid-row:last-child {
-      border-bottom: none;
-    }
-    .grid-row span:first-child {
-      font-weight: 500;
-      color: #343a40;
-    }
-    .grid-row audio {
-      width: 100%;
-      height: 38px;
-      border-radius: 4px;
-    }
+    /* ---------------- Metrics box ---------------- */
+    .metrics{background:#fbfbfe;border:1px solid var(--rule);border-radius:12px;padding:14px 16px;margin:8px 0 22px}
+    .metrics h3{margin:0 0 .5rem;font-size:1rem}
+    .metrics ul{margin:.25rem 0 0 1.1rem}
 
-    .snr-note { 
-      font-size: .85em;
-      color: #6c757d;
-      margin: 0;
-      padding-top: 1.5rem;
-      text-align: left;
+    /* ---------------- Section (distance) ---------------- */
+    .section{padding:22px 0 8px}
+    .section h3{font-size:1.25rem;margin:.25rem 0 .25rem;color:#0b63f6}
+    .section .snr{margin:0;color:var(--muted)}
+
+    /* ---------------- Algorithm blocks ---------------- */
+    .algo{border:1px solid var(--rule);border-radius:12px;padding:14px 14px 8px;margin:14px 0}
+    .algo h4{margin:0 0 .25rem;font-size:1.05rem}
+    .algo small{color:var(--muted)}
+    .best{display:inline-flex;align-items:center;gap:.25rem;background:#fff3c4;color:#7c5300;border:1px solid #facc15;border-radius:999px;padding:.1rem .5rem;font-size:.75rem;margin-left:.4rem}
+
+    /* ---------------- Players grid ---------------- */
+    .players{display:grid;grid-template-columns:120px 1fr;gap:.75rem 1rem;align-items:center;margin-top:.5rem}
+    .players .case{font-weight:600;color:#374151}
+    audio{width:100%;height:38px}
+    .fallback{display:block;margin:.2rem 0 .6rem;font-size:.82rem}
+
+    /* ---------------- Footer note ---------------- */
+    .legend{font-size:.85rem;color:var(--muted);margin-top:10px}
+
+    /* ---------------- Small screens ---------------- */
+    @media (max-width:640px){
+      .wrap{margin:0;padding:20px;border-radius:0}
+      .players{grid-template-columns:1fr}
+      .players .case{margin-top:.5rem}
     }
   </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h1>Audio Samples</h1>
-    <h2>Beamforming informed independent low-rank matrix analysis for sound source enhancement in unmanned aerial vehicles</h2>
-    <div class="authors">
-      <p>Jin Xuan Teh*, Norihiro Takamune†, Hiroshi Saruwatari†, Benjamin Yen*, Michael Kingan* &amp; Yusuke Hioka*</p>
-      <p>* Acoustics & Vibration Research Centre, University of Auckland, Auckland, NZ</p>
-      <p>† The University of Tokyo, Tokyo, Japan</p>
-      <p>‡ Tokyo Institute of Technology, Tokyo, Japan</p>
-    </div>
-    <p class="conference">
-      2024 Asia Pacific Signal and Information Processing Association Annual Summit and Conference (APSIPA ASC)
-    </p>
+  <main class="wrap" id="app">
+    <header>
+      <h1>Audio sample</h1>
+      <h2>Benchmarks for supervised ILRMA-based enhancement on UAV recordings</h2>
+      <div class="chips">
+        <span class="chip">Format: WAV</span>
+        <span class="chip">80&nbsp;dBA speech</span>
+        <span class="chip">Distances: 3&nbsp;m & 5&nbsp;m</span>
+      </div>
+      <section class="metrics">
+        <h3>Metrics</h3>
+        <ul>
+          <li><strong>SDRi</strong>: source‑to‑distortion ratio improvement</li>
+          <li><strong>STOIi</strong>: short‑time objective intelligibility improvement</li>
+        </ul>
+      </section>
+    </header>
 
-    <p class="paper-links">
-      Read the full paper:&nbsp;
-      <a href="https://doi.org/10.1109/APSIPAASC63619.2025.10849300" target="_blank">DOI:10.1109/APSIPAASC63619.2025.10849300</a>
-      &nbsp;|&nbsp;
-      <a href="http://www.apsipa2024.org/files/papers/180.pdf" target="_blank">Download PDF</a>
-    </p>
+    <!-- Sections are injected by JS below to avoid repeating markup.  -->
+  </main>
 
-    <section class="audio-section">
-      <h3>80 dBA speech loudness from a <strong>3 m</strong> distance (-19 dB SNR)</h3>
-      <div class="grid-header">
-        <span>Sample</span>
-        <span>Mic #1 input</span>
-        <span>iILRMA output</span>
-      </div>
-      <div class="grid-row">
-        <span>Male #1</span>
-        <audio controls src="audio samples/3m/3m-80dBA-male-1-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/3m/3m-80dBA-male-1-iILRMA output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Female #1</span>
-        <audio controls src="audio samples/3m/3m-80dBA-female-1-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/3m/3m-80dBA-female-1-iILRMA output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Male #2</span>
-        <audio controls src="audio samples/3m/3m-80dBA-male-2-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/3m/3m-80dBA-male-2-ilrma output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Female #2</span>
-        <audio controls src="audio samples/3m/3m-80dBA-female-2-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/3m/3m-80dBA-female-2-iILRMA output.wav"></audio>
-      </div>
-    </section>
+  <script>
+    // —— CONFIGURATION ——
+    // Folder holding audio. Kept as path segments to safely URL‑encode spaces.
+    const ROOT = ["audio sample"]; // must exist next to this HTML file
+    const distances = {
+      "3m": {
+        snr: "-19±0.2 dB",
+        cases: [1,2,3],
+        metrics: {
+          "silrma": { SDRi: "13±0.2 dB", STOIi: "0.22±0.004", best: "STOI" },
+          "silrma-RCSCME": { SDRi: "17±0.3 dB", STOIi: "0.18±0.005" },
+          "silrma-WF": { SDRi: "18±0.3 dB", STOIi: "0.19±0.004", best: "SDR" }
+        }
+      },
+      "5m": {
+        snr: "-23±0.3 dB",
+        cases: [1,2,3],
+        metrics: {
+          "silrma": { SDRi: "11±0.2 dB", STOIi: "0.20±0.003", best: "STOI" },
+          "silrma-RCSCME": { SDRi: "14±0.3 dB", STOIi: "0.15±0.003" },
+          "silrma-WF": { SDRi: "16±0.4 dB", STOIi: "0.18±0.003", best: "SDR" }
+        }
+      }
+    };
 
-    <section class="audio-section">
-      <h3>80 dBA speech loudness from a <strong>5 m</strong> distance (-23 dB SNR)</h3>
-      <div class="grid-header">
-        <span>Sample</span>
-        <span>Mic #1 input</span>
-        <span>iILRMA output</span>
-      </div>
-      <div class="grid-row">
-        <span>Male #1</span>
-        <audio controls src="audio samples/5m/5m-80dBA-male-1-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/5m/5m-80dBA-male-1-iILRMA output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Female #1</span>
-        <audio controls src="audio samples/5m/5m-80dBA-female-1-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/5m/5m-80dBA-female-1-iILRMA output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Male #2</span>
-        <audio controls src="audio samples/5m/5m-80dBA-male-2-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/5m/5m-80dBA-male-2-iILRMA output.wav"></audio>
-      </div>
-      <div class="grid-row">
-        <span>Female #2</span>
-        <audio controls src="audio samples/5m/5m-80dBA-female-2-mic 1 input.wav"></audio>
-        <audio controls src="audio samples/5m/5m-80dBA-female-2-iILRMA output.wav"></audio>
-      </div>
-    </section>
+    // Display order & labels by algorithm key (file stem after distance_)
+    const ALGOS = [
+      { key: "input", label: "Input", describe: d => `SNR: <strong>${distances[d].snr}</strong>` },
+      { key: "silrma", label: "Supervised ILRMA", describe: d => metricHTML(distances[d].metrics["silrma"], d) },
+      { key: "silrma-RCSCME", label: "Supervised ILRMA + RCSCME", describe: d => metricHTML(distances[d].metrics["silrma-RCSCME"], d) },
+      { key: "silrma-WF", label: "Supervised ILRMA + WF", describe: d => metricHTML(distances[d].metrics["silrma-WF"], d) }
+    ];
 
-    <p class="snr-note">SNR: signal-to-noise ratio</p>
-  </div>
+    // —— HELPERS ——
+    const enc = s => encodeURIComponent(s);
+    const joinPath = segs => segs.map(enc).join('/');
+    function filePath(distance, algoKey, idx){
+      const fname = `${distance}_${algoKey}_${idx}.wav`;
+      return joinPath([...ROOT, distance, fname]);
+    }
+    function metricHTML(m){
+      if(!m) return '';
+      const star = m.best ? `<span class="best" title="Best-performing in this distance">⭐ Best</span>` : '';
+      return `<small><strong>SDRi:</strong> ${m.SDRi} &nbsp; <strong>STOIi:</strong> ${m.STOIi} ${star}</small>`;
+    }
+
+    // —— RENDER ——
+    const app = document.getElementById('app');
+    for(const d of Object.keys(distances)){
+      const sec = document.createElement('section');
+      sec.className = 'section';
+      sec.innerHTML = `
+        <h3>80 dBA speech loudness from a <strong>${d.replace('m','')} m</strong> distance</h3>
+        <p class="snr">Distance label: <code>${d}</code> &nbsp;•&nbsp; ${distances[d].cases.length} cases</p>
+      `;
+
+      // Each algorithm block
+      for(const a of ALGOS){
+        const block = document.createElement('div');
+        block.className = 'algo';
+        block.innerHTML = `<h4>${a.label}</h4>${a.describe(d) ? `<p>${a.describe(d)}</p>` : ''}`;
+
+        const grid = document.createElement('div');
+        grid.className = 'players';
+
+        for(const i of distances[d].cases){
+          const label = document.createElement('div');
+          label.textContent = `Case ${i}`;
+          label.className = 'case';
+
+          const src = filePath(d, a.key, i);
+          const audio = document.createElement('audio');
+          audio.setAttribute('controls', '');
+          audio.setAttribute('preload', 'none');
+          audio.setAttribute('src', src);
+          audio.setAttribute('aria-label', `${a.label} — ${d} — case ${i}`);
+
+          // Optional fallback link beneath the player (useful on some mobile browsers)
+          const link = document.createElement('a');
+          link.href = src;
+          link.className = 'fallback';
+          link.textContent = 'Open file';
+
+          const cell = document.createElement('div');
+          cell.appendChild(audio);
+          cell.appendChild(link);
+
+          grid.appendChild(label);
+          grid.appendChild(cell);
+        }
+
+        block.appendChild(grid);
+        sec.appendChild(block);
+      }
+
+      const legend = document.createElement('p');
+      legend.className = 'legend';
+      legend.innerHTML = '⭐ indicates the best‑performing framework for this distance.';
+      sec.appendChild(legend);
+
+      app.appendChild(sec);
+      app.appendChild(document.createElement('hr'));
+    }
+  </script>
 </body>
 </html>
