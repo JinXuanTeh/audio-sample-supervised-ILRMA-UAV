@@ -39,10 +39,10 @@
     .best{display:inline-flex;align-items:center;gap:.25rem;background:#fff3c4;color:#7c5300;border:1px solid #facc15;border-radius:999px;padding:.1rem .5rem;font-size:.75rem;margin-left:.4rem}
 
     /* ---------------- Players grid ---------------- */
-    .players{display:grid;grid-template-columns:120px 1fr;gap:.75rem 1rem;align-items:center;margin-top:.5rem}
-    .players .case{font-weight:600;color:#374151}
-    audio{width:100%;height:38px}
-    .fallback{display:block;margin:.2rem 0 .6rem;font-size:.82rem}
+    .players{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem 1rem;align-items:start;margin-top:.5rem}
+    .players .colhead{font-weight:700;color:#374151;text-align:center}
+    audio{width:100%;height:38px;border-radius:4px}
+    .fallback{display:block;margin:.2rem 0 .6rem;font-size:.82rem;text-align:center}
 
     /* ---------------- Footer note ---------------- */
     .legend{font-size:.85rem;color:var(--muted);margin-top:10px}
@@ -51,6 +51,8 @@
     @media (max-width:640px){
       .wrap{margin:0;padding:20px;border-radius:0}
       .players{grid-template-columns:1fr}
+    }
+      .players{grid-template-columns:1fr}
       .players .case{margin-top:.5rem}
     }
   </style>
@@ -58,8 +60,8 @@
 <body>
   <main class="wrap" id="app">
     <header>
-      <h1>Audio samples</h1>
-      <h2>Benchmarks for supervised ILRMA-based enhancement on UAV recordings.</h2>
+      <h1>Audio sample</h1>
+      <h2>Benchmarks for supervised ILRMA-based enhancement on UAV recordings</h2>
       <div class="chips">
         <span class="chip">Format: WAV</span>
         <span class="chip">80&nbsp;dBA speech</span>
@@ -142,29 +144,32 @@
         const grid = document.createElement('div');
         grid.className = 'players';
 
+        // Header row: Case numbers
         for(const i of distances[d].cases){
-          const label = document.createElement('div');
-          label.textContent = `Case ${i}`;
-          label.className = 'case';
+          const head = document.createElement('div');
+          head.className = 'colhead';
+          head.textContent = `Case ${i}`;
+          grid.appendChild(head);
+        }
 
+        // Players row: audio elements (3 columns)
+        for(const i of distances[d].cases){
           const src = filePath(d, a.key, i);
+          const cell = document.createElement('div');
+
           const audio = document.createElement('audio');
           audio.setAttribute('controls', '');
           audio.setAttribute('preload', 'none');
           audio.setAttribute('src', src);
           audio.setAttribute('aria-label', `${a.label} — ${d} — case ${i}`);
 
-          // Optional fallback link beneath the player (useful on some mobile browsers)
           const link = document.createElement('a');
           link.href = src;
           link.className = 'fallback';
           link.textContent = 'Open file';
 
-          const cell = document.createElement('div');
           cell.appendChild(audio);
           cell.appendChild(link);
-
-          grid.appendChild(label);
           grid.appendChild(cell);
         }
 
