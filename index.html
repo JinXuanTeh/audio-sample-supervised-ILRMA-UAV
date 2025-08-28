@@ -43,13 +43,14 @@
     .star{margin-left:.25rem} 
 
     /* ---------------- Players grid ---------------- */
-    .players{display:grid;grid-template-columns:220px repeat(3,1fr);gap:.75rem 1rem;align-items:start;margin-top:.75rem}
+    .players{display:grid;grid-template-columns:220px repeat(3,1fr);gap:.5rem 1rem;align-items:start;margin-top:.5rem}
     .players .colhead{font-weight:700;color:#374151;text-align:center}
+    .row{display:grid;grid-template-columns:220px repeat(3,1fr);gap:.5rem 1rem;align-items:start;min-height:96px;margin-top:.25rem}
+    .row + .row{margin-top:6px}
     .rowlabel{align-self:start}
     .method .name{font-weight:600;margin-bottom:.25rem}
     .mlines .metrics-line{font-size:.9rem;color:var(--muted);line-height:1.4}
     audio{width:100%;height:38px;border-radius:4px}
-    .spacer{height:.9rem}
 
     /* ---------------- Footer note ---------------- */
     .legend{font-size:.85rem;color:var(--muted);margin-top:10px}
@@ -64,7 +65,7 @@
 <body>
   <main class="wrap" id="app">
     <header>
-      <h1>Audio sample</h1>
+      <h1>Audio samples</h1>
       <h2 class="subtitle-title">Semi‑Blind Source Separation for Unmanned Aerial Vehicle audition</h2>
       <div class="authors">
         <p>Jin Xuan Teh*, Norihiro Takamune†, Hiroshi Saruwatari†, Benjamin Yen*, Michael Kingan* &amp; Yusuke Hioka*</p>
@@ -148,38 +149,30 @@
         <h3>80 dBA speech loudness from a <strong>${d.replace('m','')} m</strong> distance</h3>
       `;
 
-      // Build a single grid with methods at left and 3 case columns
-      const grid = document.createElement('div');
-      grid.className = 'players';
-
-      // Header row: blank + case headers
+      // Header grid: blank + case headers
+      const headGrid = document.createElement('div');
+      headGrid.className = 'players';
       const blank = document.createElement('div');
       blank.className = 'colhead';
       blank.innerHTML = '&nbsp;';
-      grid.appendChild(blank);
+      headGrid.appendChild(blank);
       for(const i of distances[d].cases){
         const head = document.createElement('div');
         head.className = 'colhead';
         head.textContent = `Case ${i}`;
-        grid.appendChild(head);
+        headGrid.appendChild(head);
       }
+      sec.appendChild(headGrid);
 
-      // Rows per algorithm
+      // Method rows: separate equal-height grids per algorithm
       for(const a of ALGOS){
-        // Insert a full empty row BEFORE Supervised ILRMA to keep spacing even
-        if(a.key === 'silrma'){
-          const sLeft = document.createElement('div'); sLeft.className = 'spacer'; sLeft.innerHTML='&nbsp;';
-          grid.appendChild(sLeft);
-          for(const _ of distances[d].cases){
-            const s = document.createElement('div'); s.className='spacer'; s.innerHTML='&nbsp;';
-            grid.appendChild(s);
-          }
-        }
+        const row = document.createElement('div');
+        row.className = 'row';
 
         const left = document.createElement('div');
         left.className = 'rowlabel';
         left.innerHTML = `<div class="method"><div class="name">${a.label}</div>${methodInfo(a.key, d)}</div>`;
-        grid.appendChild(left);
+        row.appendChild(left);
 
         for(const i of distances[d].cases){
           const src = filePath(d, a.key, i);
@@ -190,11 +183,11 @@
           audio.setAttribute('src', src);
           audio.setAttribute('aria-label', `${a.label} — ${d} — case ${i}`);
           cell.appendChild(audio);
-          grid.appendChild(cell);
+          row.appendChild(cell);
         }
-      }
 
-      sec.appendChild(grid);
+        sec.appendChild(row);
+      }
 
       const legend = document.createElement('p');
       legend.className = 'legend';
