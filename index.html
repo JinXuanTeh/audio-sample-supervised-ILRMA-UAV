@@ -12,10 +12,13 @@
     }
     *{box-sizing:border-box}
     html,body{height:100%}
-    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Inter,Arial,Helvetica,sans-serif;color:var(--fg);background:var(--bg);line-height:1.6}
+    body{margin:0;font-family:"Segoe UI", SegoeUI, -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;color:var(--fg);background:var(--bg);line-height:1.6}
     .wrap{max-width:980px;margin:48px auto;padding:32px;background:var(--card);border-radius:14px;box-shadow:0 12px 32px rgba(0,0,0,.06)}
-    h1{margin:.25rem 0;font-size:2.2rem;letter-spacing:.2px}
-    h2{margin:0.25rem 0 1rem;font-size:1.15rem;color:var(--muted);font-weight:500}
+    h1{font-size:2.8em;margin-bottom:.75rem;color:#212529;font-weight:600}
+    h2{font-size:1.3em;margin:0 0 .5rem;font-weight:400;color:#6c757d}
+    .subtitle-title{font-size:1.8em;color:#111;font-weight:600;margin:0 0 .5rem}
+    .authors p{margin:0;font-size:.95em;color:#495057}
+    .authors .affils{font-size:.9em;color:#6c757d}
     hr{border:0;border-top:1px solid var(--rule);margin:20px 0}
 
     /* ---------------- Meta chips ---------------- */
@@ -29,20 +32,23 @@
 
     /* ---------------- Section (distance) ---------------- */
     .section{padding:22px 0 8px}
-    .section h3{font-size:1.25rem;margin:.25rem 0 .25rem;color:#0b63f6}
+    .section h3{font-size:1.4em;margin:0 0 1rem;color:#0056b3;font-weight:500}
     .section .snr{margin:0;color:var(--muted)}
 
     /* ---------------- Algorithm blocks ---------------- */
     .algo{border:1px solid var(--rule);border-radius:12px;padding:14px 14px 8px;margin:14px 0}
     .algo h4{margin:0 0 .25rem;font-size:1.05rem}
     .algo small{color:var(--muted)}
-    .best{display:inline-flex;align-items:center;gap:.25rem;background:#fff3c4;color:#7c5300;border:1px solid #facc15;border-radius:999px;padding:.1rem .5rem;font-size:.75rem;margin-left:.4rem}
+    .star{margin-left:.25rem} 
 
     /* ---------------- Players grid ---------------- */
-    .players{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem 1rem;align-items:start;margin-top:.5rem}
+    .players{display:grid;grid-template-columns:220px repeat(3,1fr);gap:.75rem 1rem;align-items:start;margin-top:.75rem}
     .players .colhead{font-weight:700;color:#374151;text-align:center}
+    .rowlabel{align-self:start}
+    .method .name{font-weight:600;margin-bottom:.25rem}
+    .mlines .metrics-line{font-size:.9rem;color:var(--muted);line-height:1.4}
     audio{width:100%;height:38px;border-radius:4px}
-    .fallback{display:block;margin:.2rem 0 .6rem;font-size:.82rem;text-align:center}
+    .spacer{height:.9rem}
 
     /* ---------------- Footer note ---------------- */
     .legend{font-size:.85rem;color:var(--muted);margin-top:10px}
@@ -52,21 +58,20 @@
       .wrap{margin:0;padding:20px;border-radius:0}
       .players{grid-template-columns:1fr}
     }
-      .players{grid-template-columns:1fr}
-      .players .case{margin-top:.5rem}
-    }
   </style>
 </head>
 <body>
   <main class="wrap" id="app">
     <header>
       <h1>Audio sample</h1>
-      <h2>Benchmarks for supervised ILRMA-based enhancement on UAV recordings</h2>
-      <div class="chips">
-        <span class="chip">Format: WAV</span>
-        <span class="chip">80&nbsp;dBA speech</span>
-        <span class="chip">Distances: 3&nbsp;m & 5&nbsp;m</span>
+      <h2 class="subtitle-title">Semi‑Blind Source Separation for Unmanned Aerial Vehicle audition</h2>
+      <div class="authors">
+        <p>Jin Xuan Teh*, Norihiro Takamune†, Hiroshi Saruwatari†, Benjamin Yen*, Michael Kingan* &amp; Yusuke Hioka*</p>
+        <p class="affils">* Acoustics &amp; Vibration Research Centre, University of Auckland, Auckland, NZ</p>
+        <p class="affils">† The University of Tokyo, Tokyo, Japan</p>
+        <p class="affils">‡ Tokyo Institute of Technology, Tokyo, Japan</p>
       </div>
+      
       <section class="metrics">
         <h3>Metrics</h3>
         <ul>
@@ -106,10 +111,10 @@
 
     // Display order & labels by algorithm key (file stem after distance_)
     const ALGOS = [
-      { key: "input", label: "Input", describe: d => `SNR: <strong>${distances[d].snr}</strong>` },
-      { key: "silrma", label: "Supervised ILRMA", describe: d => metricHTML(distances[d].metrics["silrma"], d) },
-      { key: "silrma-RCSCME", label: "Supervised ILRMA + RCSCME", describe: d => metricHTML(distances[d].metrics["silrma-RCSCME"], d) },
-      { key: "silrma-WF", label: "Supervised ILRMA + WF", describe: d => metricHTML(distances[d].metrics["silrma-WF"], d) }
+      { key: "input", label: "Input" },
+      { key: "silrma", label: "Supervised ILRMA" },
+      { key: "silrma-RCSCME", label: "Supervised ILRMA + RCSCME" },
+      { key: "silrma-WF", label: "Supervised ILRMA + WF" }
     ];
 
     // —— HELPERS ——
@@ -119,10 +124,18 @@
       const fname = `${distance}_${algoKey}_${idx}.wav`;
       return joinPath([...ROOT, distance, fname]);
     }
-    function metricHTML(m){
+    function methodInfo(key, d){
+      if(key === 'input'){
+        return `<div class="mlines"><div class="metrics-line"><strong>SNR:</strong> ${distances[d].snr}</div></div>`;
+      }
+      const m = distances[d].metrics?.[key];
       if(!m) return '';
-      const star = m.best ? `<span class="best" title="Best-performing in this distance">⭐ Best</span>` : '';
-      return `<small><strong>SDRi:</strong> ${m.SDRi} &nbsp; <strong>STOIi:</strong> ${m.STOIi} ${star}</small>`;
+      const sdrStar  = m.best === 'SDR'  ? '<span class="star">⭐</span>' : '';
+      const stoiStar = m.best === 'STOI' ? '<span class="star">⭐</span>' : '';
+      return `<div class="mlines">
+                <div class="metrics-line"><strong>SDRi:</strong> ${m.SDRi}${sdrStar}</div>
+                <div class="metrics-line"><strong>STOIi:</strong> ${m.STOIi}${stoiStar}</div>
+              </div>`;
     }
 
     // —— RENDER ——
@@ -132,54 +145,59 @@
       sec.className = 'section';
       sec.innerHTML = `
         <h3>80 dBA speech loudness from a <strong>${d.replace('m','')} m</strong> distance</h3>
-        <p class="snr">Distance label: <code>${d}</code> &nbsp;•&nbsp; ${distances[d].cases.length} cases</p>
       `;
 
-      // Each algorithm block
+      // Build a single grid with methods at left and 3 case columns
+      const grid = document.createElement('div');
+      grid.className = 'players';
+
+      // Header row: blank + case headers
+      const blank = document.createElement('div');
+      blank.className = 'colhead';
+      blank.innerHTML = '&nbsp;';
+      grid.appendChild(blank);
+      for(const i of distances[d].cases){
+        const head = document.createElement('div');
+        head.className = 'colhead';
+        head.textContent = `Case ${i}`;
+        grid.appendChild(head);
+      }
+
+      // Rows per algorithm
       for(const a of ALGOS){
-        const block = document.createElement('div');
-        block.className = 'algo';
-        block.innerHTML = `<h4>${a.label}</h4>${a.describe(d) ? `<p>${a.describe(d)}</p>` : ''}`;
-
-        const grid = document.createElement('div');
-        grid.className = 'players';
-
-        // Header row: Case numbers
-        for(const i of distances[d].cases){
-          const head = document.createElement('div');
-          head.className = 'colhead';
-          head.textContent = `Case ${i}`;
-          grid.appendChild(head);
+        // Insert a full empty row BEFORE Supervised ILRMA to keep spacing even
+        if(a.key === 'silrma'){
+          const sLeft = document.createElement('div'); sLeft.className = 'spacer'; sLeft.innerHTML='&nbsp;';
+          grid.appendChild(sLeft);
+          for(const _ of distances[d].cases){
+            const s = document.createElement('div'); s.className='spacer'; s.innerHTML='&nbsp;';
+            grid.appendChild(s);
+          }
         }
 
-        // Players row: audio elements (3 columns)
+        const left = document.createElement('div');
+        left.className = 'rowlabel';
+        left.innerHTML = `<div class="method"><div class="name">${a.label}</div>${methodInfo(a.key, d)}</div>`;
+        grid.appendChild(left);
+
         for(const i of distances[d].cases){
           const src = filePath(d, a.key, i);
           const cell = document.createElement('div');
-
           const audio = document.createElement('audio');
-          audio.setAttribute('controls', '');
-          audio.setAttribute('preload', 'none');
+          audio.setAttribute('controls','');
+          audio.setAttribute('preload','none');
           audio.setAttribute('src', src);
           audio.setAttribute('aria-label', `${a.label} — ${d} — case ${i}`);
-
-          const link = document.createElement('a');
-          link.href = src;
-          link.className = 'fallback';
-          link.textContent = 'Open file';
-
           cell.appendChild(audio);
-          cell.appendChild(link);
           grid.appendChild(cell);
         }
-
-        block.appendChild(grid);
-        sec.appendChild(block);
       }
+
+      sec.appendChild(grid);
 
       const legend = document.createElement('p');
       legend.className = 'legend';
-      legend.innerHTML = '⭐ indicates the best‑performing framework for this distance.';
+      legend.innerHTML = '⭐ marks the best value (per distance) for that metric.';
       sec.appendChild(legend);
 
       app.appendChild(sec);
